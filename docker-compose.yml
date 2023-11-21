@@ -1,0 +1,50 @@
+version: "3.3"
+
+services:
+  gitlab:
+    container_name: gitlab
+    hostname: gitlab
+    image: gitlab/gitlab-ce:16.6.0-ce.0
+    restart: unless-stopped
+    ports:
+      - 9980:80     # HTTP
+      - 9943:443    # HTTPS
+      - 9922:22     # SSH
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        gitlab_rails['time_zone'] = 'Europe/Berlin'
+        external_url 'http://10.10.10.140:9980'
+        ### when using external postgres
+        # postgresql['enable'] = true
+        # gitlab_rails['db_adapter'] = 'postgresql'
+        # gitlab_rails['db_encoding'] = 'unicode'
+        # gitlab_rails['db_host'] = 'gitlab-postgres'
+        # gitlab_rails['db_password'] = 'gitlab'
+        ### when using external redis
+        # redis['enable'] = true
+        # gitlab_rails['redis_host'] = 'gitlab-redis'
+        # gitlab_rails['redis_port'] = 6379
+        ### disable almost all optional services
+        gitlab_kas['enable'] = false
+        gitlab_rails['smtp_enable'] = false
+        gitlab_rails['microsoft_graph_mailer_enabled'] = false
+        mattermost['enable'] = false
+        mattermost_nginx['enable'] = false
+        prometheus['enable'] = false
+        alertmanager['enable'] = false
+        prometheus_monitoring['enable'] = false
+        grafana['enable'] = false
+        postgres_exporter['enable'] = false
+        pgbouncer_exporter['enable'] = false
+        node_exporter['enable'] = false
+        redis_exporter['enable'] = false
+        monitoring_role['enable'] = false
+        gitlab_exporter['enable'] = false
+        ### configure for low-memory usage
+        puma['worker_processes'] = 0
+        sidekiq['max_concurrency'] = 10
+    shm_size: '128m'
+    volumes:
+      - ./config:/etc/gitlab
+      - ./logs:/var/log/gitlab
+      - ./data:/var/opt/gitlab
