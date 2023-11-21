@@ -3,7 +3,7 @@ version: "3.3"
 services:
   gitlab:
     container_name: gitlab
-    hostname: gitlab
+    hostname: gitlab.example.com
     image: gitlab/gitlab-ce:16.6.0-ce.0
     restart: unless-stopped
     ports:
@@ -12,8 +12,23 @@ services:
       - 9922:22     # SSH
     environment:
       GITLAB_OMNIBUS_CONFIG: |
+        gitlab_rails['initial_root_password'] = 'MySuperSecretAndSecurePassw0rd!'
         gitlab_rails['time_zone'] = 'Europe/Berlin'
-        external_url 'http://10.10.10.140:9980'
+        ### external url´s
+        external_url 'https://gitlab.example.com'
+        # registry_external_url 'https://registry.gitlab.example.com'
+        # mattermost_external_url 'https://mattermost.gitlab.example.com'
+        ### when using external reverse proxy
+        letsencrypt['enable'] = false
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+        nginx['redirect_http_to_https'] = false
+        nginx['gzip_enabled'] = false
+        # gitlab_rails['trusted_proxies'] = [ '192.168.1.0/24', '192.168.2.1', '2001:0db8::/32' ]
+        # registry_nginx['listen_port'] = 80
+        # registry_nginx['listen_https'] = false
+        # registry_nginx['redirect_http_to_https'] = false
+        # mattermost_nginx['redirect_http_to_https'] = false
         ### when using external postgres
         # postgresql['enable'] = true
         # gitlab_rails['db_adapter'] = 'postgresql'
@@ -43,7 +58,7 @@ services:
         ### configure for low-memory usage
         puma['worker_processes'] = 0
         sidekiq['max_concurrency'] = 10
-    shm_size: '128m'
+    shm_size: '256m'
     volumes:
       - ./config:/etc/gitlab
       - ./logs:/var/log/gitlab
