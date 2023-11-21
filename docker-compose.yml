@@ -12,7 +12,6 @@ services:
       - 9922:22     # SSH
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        gitlab_rails['initial_root_password'] = 'MySuperSecretAndSecurePassw0rd!'
         gitlab_rails['time_zone'] = 'Europe/Berlin'
         ### external url´s
         external_url 'https://gitlab.example.com'
@@ -58,6 +57,8 @@ services:
         ### configure for low-memory usage
         puma['worker_processes'] = 0
         sidekiq['max_concurrency'] = 10
+        ### disable service ping (telemetry)
+        gitlab_rails['usage_ping_enabled'] = false
     shm_size: '256m'
     volumes:
       - ./config:/etc/gitlab
