@@ -7,6 +7,8 @@ This should be deployed with a **reverse proxy** like Traefik or Caddy and the c
 
 Alternatively configure GitLab to provide HTTPS by itself.
 
+This is not meant to be a copy/paste and run foolproof way to run GitLab, it should serve as a example on how to slim it down.
+
 - [GitLab documentation to configure Omnibus image](https://docs.gitlab.com/ce/install/docker.html)
 
 - [Reddit post about disabling unwanted services](https://www.reddit.com/r/gitlab/comments/10m0hxa/gitlab_container_image_without_extra_applications/)
